@@ -6,11 +6,11 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Hexo</title>
+  <title>Tag: Flink | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:url" content="http://example.com/tags/Flink/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="John Doe">
@@ -152,116 +152,34 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-【读源码】StreamGraph-生成" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
     
-      <header class="article-header">
-        
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2020" class="archive-year">2020</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2020/12/15/%E3%80%90%E8%AF%BB%E6%BA%90%E7%A0%81%E3%80%91StreamGraph-%E7%94%9F%E6%88%90/" class="archive-article-date">
+  	<time datetime="2020-12-14T16:33:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-15</time>
+</a>
+        </div>
+    	 
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/15/%E3%80%90%E8%AF%BB%E6%BA%90%E7%A0%81%E3%80%91StreamGraph-%E7%94%9F%E6%88%90/">【读源码】StreamGraph 生成</a>
+      <a class="archive-article-title" href="/2020/12/15/%E3%80%90%E8%AF%BB%E6%BA%90%E7%A0%81%E3%80%91StreamGraph-%E7%94%9F%E6%88%90/">【读源码】StreamGraph 生成</a>
     </h1>
   
 
-        
-        <a href="/2020/12/15/%E3%80%90%E8%AF%BB%E6%BA%90%E7%A0%81%E3%80%91StreamGraph-%E7%94%9F%E6%88%90/" class="archive-article-date">
-  	<time datetime="2020-12-14T16:33:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="从addSource-开始"><a href="#从addSource-开始" class="headerlink" title="从addSource 开始"></a>从addSource 开始</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public &lt;OUT&gt; DataStreamSource&lt;OUT&gt; addSource(SourceFunction&lt;OUT&gt; function, String sourceName, TypeInformation&lt;OUT&gt; typeInfo) &#123;</span><br><span class="line"></span><br><span class="line">	if (typeInfo &#x3D;&#x3D; null) &#123;</span><br><span class="line">		if (function instanceof ResultTypeQueryable) &#123;</span><br><span class="line">			typeInfo &#x3D; ((ResultTypeQueryable&lt;OUT&gt;) function).getProducedType();</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			try &#123;</span><br><span class="line">				typeInfo &#x3D; TypeExtractor.createTypeInfo(</span><br><span class="line">						SourceFunction.class,</span><br><span class="line">						function.getClass(), 0, null, null);</span><br><span class="line">			&#125; catch (final InvalidTypesException e) &#123;</span><br><span class="line">				typeInfo &#x3D; (TypeInformation&lt;OUT&gt;) new MissingTypeInfo(sourceName, e);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	boolean isParallel &#x3D; function instanceof ParallelSourceFunction;</span><br><span class="line"></span><br><span class="line">	clean(function);</span><br><span class="line">	StreamSource&lt;OUT, ?&gt; sourceOperator;</span><br><span class="line">	if (function instanceof StoppableFunction) &#123;</span><br><span class="line">		sourceOperator &#x3D; new StoppableStreamSource&lt;&gt;(cast2StoppableSourceFunction(function));</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		sourceOperator &#x3D; new StreamSource&lt;&gt;(function);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return new DataStreamSource&lt;&gt;(this, typeInfo, sourceOperator, isParallel, sourceName);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在执行 env.addSource 后，这段代码会被调用，返回一个构造好的DataStream。总结一下上段代码逻辑：</p>
-<ol>
-<li><p>获取数据源 source 的 output 信息 TypeInformation</p>
-</li>
-<li><p>生成 StreamSource&lt;OUT, ?&gt; sourceOperator</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">	public DataStreamSource(StreamExecutionEnvironment environment,</span><br><span class="line">		TypeInformation&lt;T&gt; outTypeInfo, StreamSource&lt;T, ?&gt; operator,</span><br><span class="line">		boolean isParallel, String sourceName) &#123;</span><br><span class="line">	super(environment, new SourceTransformation&lt;&gt;(sourceName, operator, outTypeInfo, environment.getParallelism()));</span><br><span class="line"></span><br><span class="line">	this.isParallel &#x3D; isParallel;</span><br><span class="line">	if (!isParallel) &#123;</span><br><span class="line">		setParallelism(1);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将 StreamTransformation 添加到算子列表 transformations 中</p>
-</li>
-<li><p>构造DataStreamSource （typeInfo, sourceOperator, isParallel, sourceName）对象，并返回</p>
-<p>返回DataStreamSource 具体的继承关系如下：</p>
-</li>
-</ol>
-<p>![未命名文件 (D:/workspace/workspace-github/Knowledge/Flink-Knowledge/resources/0D5F6EC40A87FBC95A9EC3C425719AB6.png =830x731).png](resources/0D5F6EC40A87FBC95A9EC3C425719AB6.png =830x731) </p>
-<p> DataStreamSource 是一个 DataStream 数据流抽象，StreamSource 是一个 StreamOperator 算子抽象，在 flink 中一个 DataStream 封装了一次数据流转换，一个 StreamOperator 封装了一个函数接口，比如 map、reduce、keyBy等。</p>
-<p> ![未命名文件 (D:/workspace/workspace-github/Knowledge/Flink-Knowledge/resources/A5A4C8B6001CEBEBEC28CF80CCDA34A4.png =896x858).png](resources/A5A4C8B6001CEBEBEC28CF80CCDA34A4.png =896x858)</p>
-<h3 id="在map操作上继续"><a href="#在map操作上继续" class="headerlink" title="在map操作上继续"></a>在map操作上继续</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public &lt;R&gt; SingleOutputStreamOperator&lt;R&gt; map(MapFunction&lt;T, R&gt; mapper) &#123;</span><br><span class="line"></span><br><span class="line">	TypeInformation&lt;R&gt; outType &#x3D; TypeExtractor.getMapReturnTypes(clean(mapper), getType(),</span><br><span class="line">			Utils.getCallLocationName(), true);</span><br><span class="line"></span><br><span class="line">	return transform(&quot;Map&quot;, outType, new StreamMap&lt;&gt;(clean(mapper)));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>从代码上看，一次map操作会触发一次transform，transform 又做了什么？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public &lt;R&gt; SingleOutputStreamOperator&lt;R&gt; transform(String operatorName, TypeInformation&lt;R&gt; outTypeInfo, OneInputStreamOperator&lt;T, R&gt; operator) &#123;</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; read the output type of the input Transform to coax out errors about MissingTypeInfo</span><br><span class="line">	transformation.getOutputType();</span><br><span class="line"></span><br><span class="line">	OneInputTransformation&lt;T, R&gt; resultTransform &#x3D; new OneInputTransformation&lt;&gt;(</span><br><span class="line">			this.transformation,</span><br><span class="line">			operatorName,</span><br><span class="line">			operator,</span><br><span class="line">			outTypeInfo,</span><br><span class="line">			environment.getParallelism());</span><br><span class="line"></span><br><span class="line">	@SuppressWarnings(&#123; &quot;unchecked&quot;, &quot;rawtypes&quot; &#125;)</span><br><span class="line">	SingleOutputStreamOperator&lt;R&gt; returnStream &#x3D; new SingleOutputStreamOperator(environment, resultTransform);</span><br><span class="line"></span><br><span class="line">	getExecutionEnvironment().addOperator(resultTransform);</span><br><span class="line"></span><br><span class="line">	return returnStream;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p> 上面代码看，transform方法内构造了一个 StreamTransformation并以此作为成员变量封装成另一个 DataStream 返回，StreamTransformation是 flink关于数据流转换的核心抽象，只有需要 transform 的流才会生成新的DataStream 算子。getExecutionEnvironment().addOperator(resultTransform)flink会将transformation维护起来。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public void addOperator(StreamTransformation&lt;?&gt; transformation) &#123;</span><br><span class="line">	Preconditions.checkNotNull(transformation, &quot;transformation must not be null.&quot;);</span><br><span class="line">	this.transformations.add(transformation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>用户的一连串操作 map join 等实际上在 DataStream 上做了转换，并且flink将这些 StreamTransformation 维护起来，一直到最后，用户执行 env.execute()这样一段逻辑，StreamGraph 的构建才算真正开始</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public JobExecutionResult execute(String jobName) throws Exception &#123;</span><br><span class="line">	Preconditions.checkNotNull(jobName, &quot;Streaming Job name should not be null.&quot;);</span><br><span class="line"></span><br><span class="line">	StreamGraph streamGraph &#x3D; this.getStreamGraph();</span><br><span class="line">	streamGraph.setJobName(jobName);</span><br><span class="line"></span><br><span class="line">	transformations.clear();</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; execute the programs</span><br><span class="line">	if (ctx instanceof DetachedEnvironment) &#123;</span><br><span class="line">		LOG.warn(&quot;Job was executed in detached mode, the results will be available on completion.&quot;);</span><br><span class="line">		((DetachedEnvironment) ctx).setDetachedPlan(streamGraph);</span><br><span class="line">		return DetachedEnvironment.DetachedJobExecutionResult.INSTANCE;</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		return ctx</span><br><span class="line">			.getClient()</span><br><span class="line">			.run(streamGraph, ctx.getJars(), ctx.getClasspaths(), ctx.getUserCodeClassLoader(), ctx.getSavepointRestoreSettings())</span><br><span class="line">			.getJobExecutionResult();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>这段代码两件事：</p>
-<ol>
-<li>调用 StreamGraphGenerator.generate 生成 StreamGraph</li>
-<li>使用 Client 运行 stream graph</li>
-</ol>
-<h3 id="说说-StreamGraphGenerator"><a href="#说说-StreamGraphGenerator" class="headerlink" title="说说 StreamGraphGenerator"></a>说说 StreamGraphGenerator</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public static StreamGraph generate(StreamExecutionEnvironment env, List&lt;StreamTransformation&lt;?&gt;&gt; transformations) &#123;</span><br><span class="line">	return new StreamGraphGenerator(env).generateInternal(transformations);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line"> * This starts the actual transformation, beginning from the sinks.</span><br><span class="line"> *&#x2F;</span><br><span class="line">private StreamGraph generateInternal(List&lt;StreamTransformation&lt;?&gt;&gt; transformations) &#123;</span><br><span class="line">	for (StreamTransformation&lt;?&gt; transformation: transformations) &#123;</span><br><span class="line">		transform(transformation);</span><br><span class="line">	&#125;</span><br><span class="line">	return streamGraph;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>迭代遍历transformations，调用transform方法，依据添加算子时保存的 transformations 信息生成 job graph 中的节点，并创建节点连接。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">if (transform instanceof OneInputTransformation&lt;?, ?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformOneInputTransform((OneInputTransformation&lt;?, ?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof TwoInputTransformation&lt;?, ?, ?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformTwoInputTransform((TwoInputTransformation&lt;?, ?, ?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof SourceTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformSource((SourceTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof SinkTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformSink((SinkTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof UnionTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformUnion((UnionTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof SplitTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformSplit((SplitTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof SelectTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformSelect((SelectTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof FeedbackTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformFeedback((FeedbackTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof CoFeedbackTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformCoFeedback((CoFeedbackTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof PartitionTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformPartition((PartitionTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else if (transform instanceof SideOutputTransformation&lt;?&gt;) &#123;</span><br><span class="line">	transformedIds &#x3D; transformSideOutput((SideOutputTransformation&lt;?&gt;) transform);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">	throw new IllegalStateException(&quot;Unknown transformation: &quot; + transform);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>针对不同的StreamTransformation的子类实现，委托不同的方法进行转化（scala写起来要比这个简单许多）。拿第一个oneInputTransform 举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Transforms a &#123;@code OneInputTransformation&#125;.</span><br><span class="line"> *</span><br><span class="line"> * &lt;p&gt;This recursively transforms the inputs, creates a new &#123;@code StreamNode&#125; in the graph and</span><br><span class="line"> * wired the inputs to this new node.</span><br><span class="line"> *&#x2F;</span><br><span class="line">private &lt;IN, OUT&gt; Collection&lt;Integer&gt; transformOneInputTransform(OneInputTransformation&lt;IN, OUT&gt; transform) &#123;</span><br><span class="line">   &#x2F;&#x2F; 递归调用transform</span><br><span class="line">	Collection&lt;Integer&gt; inputIds &#x3D; transform(transform.getInput());</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; the recursive call might have already transformed this</span><br><span class="line">	if (alreadyTransformed.containsKey(transform)) &#123;</span><br><span class="line">		return alreadyTransformed.get(transform);</span><br><span class="line">	&#125;</span><br><span class="line">   &#x2F;&#x2F; 确定SlotSharingGroup的名称</span><br><span class="line">	String slotSharingGroup &#x3D; determineSlotSharingGroup(transform.getSlotSharingGroup(), inputIds);</span><br><span class="line">   &#x2F;&#x2F; 添加节点</span><br><span class="line">	streamGraph.addOperator(transform.getId(),</span><br><span class="line">			slotSharingGroup,</span><br><span class="line">			transform.getCoLocationGroupKey(),</span><br><span class="line">			transform.getOperator(),</span><br><span class="line">			transform.getInputType(),</span><br><span class="line">			transform.getOutputType(),</span><br><span class="line">			transform.getName());</span><br><span class="line">   &#x2F;&#x2F;设置属性</span><br><span class="line">	if (transform.getStateKeySelector() !&#x3D; null) &#123;</span><br><span class="line">		TypeSerializer&lt;?&gt; keySerializer &#x3D; transform.getStateKeyType().createSerializer(env.getConfig());</span><br><span class="line">		streamGraph.setOneInputStateKey(transform.getId(), transform.getStateKeySelector(), keySerializer);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	streamGraph.setParallelism(transform.getId(), transform.getParallelism());</span><br><span class="line">	streamGraph.setMaxParallelism(transform.getId(), transform.getMaxParallelism());</span><br><span class="line">   &#x2F;&#x2F; 构建edge</span><br><span class="line">	for (Integer inputId: inputIds) &#123;</span><br><span class="line">		streamGraph.addEdge(inputId, transform.getId(), 0);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return Collections.singleton(transform.getId());</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>OneInputTransformation 对应的操作算子有很多，比如FlatMap、Map、filter等。<br>transfrom方法有很多，就不一一列举了，这里可以总结一下：tranform方法将 StreamTransformation 转换为 StreamNode，StreamNode 保存了算子的信息，StreamNode 构成的 DAG 图 StreamGraph。这个图提交给client时，还会做进一步的优化：<br>StreamGraph 将进一步转换为 JobGraph，这一步工作由 StreamingJobGraphGenerator 来完成。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">private JobGraph createJobGraph() &#123;</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; make sure that all vertices start immediately</span><br><span class="line">		jobGraph.setScheduleMode(ScheduleMode.EAGER);</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; Generate deterministic hashes for the nodes in order to identify them across</span><br><span class="line">		&#x2F;&#x2F; submission iff they didn&#39;t change.</span><br><span class="line">		Map&lt;Integer, byte[]&gt; hashes &#x3D; defaultStreamGraphHasher.traverseStreamGraphAndGenerateHashes(streamGraph);</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; Generate legacy version hashes for backwards compatibility</span><br><span class="line">		List&lt;Map&lt;Integer, byte[]&gt;&gt; legacyHashes &#x3D; new ArrayList&lt;&gt;(legacyStreamGraphHashers.size());</span><br><span class="line">		for (StreamGraphHasher hasher : legacyStreamGraphHashers) &#123;</span><br><span class="line">			legacyHashes.add(hasher.traverseStreamGraphAndGenerateHashes(streamGraph));</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Map&lt;Integer, List&lt;Tuple2&lt;byte[], byte[]&gt;&gt;&gt; chainedOperatorHashes &#x3D; new HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">		setChaining(hashes, legacyHashes, chainedOperatorHashes);</span><br><span class="line"></span><br><span class="line">		setPhysicalEdges();</span><br><span class="line"></span><br><span class="line">		setSlotSharingAndCoLocation();</span><br><span class="line"></span><br><span class="line">		configureCheckpointing();</span><br><span class="line"></span><br><span class="line">		JobGraphGenerator.addUserArtifactEntries(streamGraph.getEnvironment().getCachedFiles(), jobGraph);</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; set the ExecutionConfig last when it has been finalized</span><br><span class="line">		try &#123;</span><br><span class="line">			jobGraph.setExecutionConfig(streamGraph.getExecutionConfig());</span><br><span class="line">		&#125;</span><br><span class="line">		catch (IOException e) &#123;</span><br><span class="line">			throw new IllegalConfigurationException(&quot;Could not serialize the ExecutionConfig.&quot; +</span><br><span class="line">					&quot;This indicates that non-serializable types (like custom serializers) were registered&quot;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		return jobGraph;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>代码主要逻辑如下：</p>
-<ol>
-<li>遍历stream graph</li>
-<li>生成operatorChain</li>
-<li>设置物理边</li>
-<li>设置SlotSharing Group</li>
-<li>配置checpoint</li>
-</ol>
-<h3 id="operator-Chain"><a href="#operator-Chain" class="headerlink" title="operator Chain"></a>operator Chain</h3><p>在StreamGraph中可以知道一个Operator对应一个StreamNode，一个DataStream.map().filter() 这个关系中map和filter Operator会组成不同的StreamNode，最后生成Task, 如果这两个Task不在同一个Slot或在不同一个TaskManager中，数据会经过网络从map传到filter，执行性能会很差，考虑到这一点，flink引入 operator chain的概念， 一个operator chain 代表一组可以在同一个Slot执行的Operator串。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public static boolean isChainable(StreamEdge edge, StreamGraph streamGraph) &#123;</span><br><span class="line">	StreamNode upStreamVertex &#x3D; streamGraph.getSourceVertex(edge);</span><br><span class="line">	StreamNode downStreamVertex &#x3D; streamGraph.getTargetVertex(edge);</span><br><span class="line"></span><br><span class="line">	StreamOperator&lt;?&gt; headOperator &#x3D; upStreamVertex.getOperator();</span><br><span class="line">	StreamOperator&lt;?&gt; outOperator &#x3D; downStreamVertex.getOperator();</span><br><span class="line"></span><br><span class="line">	return downStreamVertex.getInEdges().size() &#x3D;&#x3D; 1</span><br><span class="line">			&amp;&amp; outOperator !&#x3D; null</span><br><span class="line">			&amp;&amp; headOperator !&#x3D; null</span><br><span class="line">			&amp;&amp; upStreamVertex.isSameSlotSharingGroup(downStreamVertex)</span><br><span class="line">			&amp;&amp; outOperator.getChainingStrategy() &#x3D;&#x3D; ChainingStrategy.ALWAYS</span><br><span class="line">			&amp;&amp; (headOperator.getChainingStrategy() &#x3D;&#x3D; ChainingStrategy.HEAD ||</span><br><span class="line">				headOperator.getChainingStrategy() &#x3D;&#x3D; ChainingStrategy.ALWAYS)</span><br><span class="line">			&amp;&amp; (edge.getPartitioner() instanceof ForwardPartitioner)</span><br><span class="line">			&amp;&amp; upStreamVertex.getParallelism() &#x3D;&#x3D; downStreamVertex.getParallelism()</span><br><span class="line">			&amp;&amp; streamGraph.isChainingEnabled();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>从上面的代码可以看出，以下几种情况可以chain：</p>
-<ul>
-<li>下游的input 只有一个上游（downStreamVertex.getInEdges().size() == 1）</li>
-<li>同属一个SlotSharingGroup （upStreamVertex.isSameSlotSharingGroup(downStreamVertex)）</li>
-<li>允许chain 打开 （streamGraph.isChainingEnabled()）</li>
-<li>Partitioner 为ForwardPartitioner (edge.getPartitioner() instanceof ForwardPartitioner)</li>
-<li>并行度一致 upStreamVertex.getParallelism() == downStreamVertex.getParallelism()</li>
-<li>ChainingStrategy允许chain</li>
-</ul>
-<p>总结一下JobGraph 生成逻辑：</p>
-<ul>
-<li>由DataStream上的操作生成StreamTransformation列表</li>
-<li>从StreamTransformation的生成关系创建StreamNode和StreamEdge</li>
-<li>做算子chain，合并成 JobVertex，并生成 JobEdge</li>
-</ul>
-<p>一个JobVertex 代表一个逻辑计划的节点，就是 DAG 图上的顶点。JobGraph相对于StreamGraph的最主要区别是将一些StreamNode合并成一个JobVertex, 而JobVertex通过JobEdge(物理边)相连, 最大程度的优化了StreamGraph。</p>
-<h3 id="生成ExecutionGraph"><a href="#生成ExecutionGraph" class="headerlink" title="生成ExecutionGraph"></a>生成ExecutionGraph</h3><p>StreamGraph和JobGraph都是在client生成的,然后通过 submitJob 提交任务到JobMaster。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">public JobMaster(</span><br><span class="line">		RpcService rpcService,</span><br><span class="line">		JobMasterConfiguration jobMasterConfiguration,</span><br><span class="line">		ResourceID resourceId,</span><br><span class="line">		JobGraph jobGraph,</span><br><span class="line">		HighAvailabilityServices highAvailabilityService,</span><br><span class="line">		SlotPoolFactory slotPoolFactory,</span><br><span class="line">		SchedulerFactory schedulerFactory,</span><br><span class="line">		JobManagerSharedServices jobManagerSharedServices,</span><br><span class="line">		HeartbeatServices heartbeatServices,</span><br><span class="line">		JobManagerJobMetricGroupFactory jobMetricGroupFactory,</span><br><span class="line">		OnCompletionActions jobCompletionActions,</span><br><span class="line">		FatalErrorHandler fatalErrorHandler,</span><br><span class="line">		ClassLoader userCodeLoader) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">	super(rpcService, AkkaRpcServiceUtils.createRandomName(JOB_MANAGER_NAME));</span><br><span class="line"></span><br><span class="line">	final JobMasterGateway selfGateway &#x3D; getSelfGateway(JobMasterGateway.class);</span><br><span class="line"></span><br><span class="line">      ……</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	resourceManagerLeaderRetriever &#x3D; highAvailabilityServices.getResourceManagerLeaderRetriever();</span><br><span class="line"></span><br><span class="line">	this.slotPool &#x3D; checkNotNull(slotPoolFactory).createSlotPool(jobGraph.getJobID());</span><br><span class="line"></span><br><span class="line">	this.scheduler &#x3D; checkNotNull(schedulerFactory).createScheduler(slotPool);</span><br><span class="line"></span><br><span class="line">	this.registeredTaskManagers &#x3D; new HashMap&lt;&gt;(4);</span><br><span class="line"></span><br><span class="line">	this.backPressureStatsTracker &#x3D; checkNotNull(jobManagerSharedServices.getBackPressureStatsTracker());</span><br><span class="line">	this.lastInternalSavepoint &#x3D; null;</span><br><span class="line"></span><br><span class="line">	this.jobManagerJobMetricGroup &#x3D; jobMetricGroupFactory.create(jobGraph);</span><br><span class="line">	this.executionGraph &#x3D; createAndRestoreExecutionGraph(jobManagerJobMetricGroup);</span><br><span class="line">	this.jobStatusListener &#x3D; null;</span><br><span class="line"></span><br><span class="line">	this.resourceManagerConnection &#x3D; null;</span><br><span class="line">	this.establishedResourceManagerConnection &#x3D; null;</span><br><span class="line"></span><br><span class="line">	this.accumulators &#x3D; new HashMap&lt;&gt;();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>从上面的源代码可以看出，在JobMaster的构造函数中，会生成ExecutionGraph。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 流式作业中，schedule mode固定是EAGER的</span><br><span class="line">    executionGraph.setScheduleMode(jobGraph.getScheduleMode());</span><br><span class="line">		executionGraph.setQueuedSchedulingAllowed(jobGraph.getAllowQueuedScheduling());</span><br><span class="line"></span><br><span class="line">		try &#123;</span><br><span class="line">			executionGraph.setJsonPlan(JsonPlanGenerator.generatePlan(jobGraph));</span><br><span class="line">		&#125;</span><br><span class="line">		catch (Throwable t) &#123;</span><br><span class="line">			log.warn(&quot;Cannot create JSON plan for job&quot;, t);</span><br><span class="line">			&#x2F;&#x2F; give the graph an empty plan</span><br><span class="line">			executionGraph.setJsonPlan(&quot;&#123;&#125;&quot;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; initialize the vertices that have a master initialization hook</span><br><span class="line">		&#x2F;&#x2F; file output formats create directories here, input formats create splits</span><br><span class="line"></span><br><span class="line">		final long initMasterStart &#x3D; System.nanoTime();</span><br><span class="line">		log.info(&quot;Running initialization on master for job &#123;&#125; (&#123;&#125;).&quot;, jobName, jobId);</span><br><span class="line">    &#x2F;&#x2F; 检查executableClass(即operator类)，设置最大并发</span><br><span class="line">    &#x2F;&#x2F; </span><br><span class="line">		for (JobVertex vertex : jobGraph.getVertices()) &#123;</span><br><span class="line">			String executableClass &#x3D; vertex.getInvokableClassName();</span><br><span class="line">			if (executableClass &#x3D;&#x3D; null || executableClass.isEmpty()) &#123;</span><br><span class="line">				throw new JobSubmissionException(jobId,</span><br><span class="line">						&quot;The vertex &quot; + vertex.getID() + &quot; (&quot; + vertex.getName() + &quot;) has no invokable class.&quot;);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (vertex.getParallelism() &#x3D;&#x3D; ExecutionConfig.PARALLELISM_AUTO_MAX) &#123;</span><br><span class="line">				if (parallelismForAutoMax &lt; 0) &#123;</span><br><span class="line">					throw new JobSubmissionException(</span><br><span class="line">						jobId,</span><br><span class="line">						PARALLELISM_AUTO_MAX_ERROR_MESSAGE);</span><br><span class="line">				&#125;</span><br><span class="line">				else &#123;</span><br><span class="line">					vertex.setParallelism(parallelismForAutoMax);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			try &#123;</span><br><span class="line">				vertex.initializeOnMaster(classLoader);</span><br><span class="line">			&#125;</span><br><span class="line">			catch (Throwable t) &#123;</span><br><span class="line">					throw new JobExecutionException(jobId,</span><br><span class="line">							&quot;Cannot initialize task &#39;&quot; + vertex.getName() + &quot;&#39;: &quot; + t.getMessage(), t);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		log.info(&quot;Successfully ran initialization on master in &#123;&#125; ms.&quot;,</span><br><span class="line">				(System.nanoTime() - initMasterStart) &#x2F; 1_000_000);</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; 按拓扑顺序，获取所有的JobVertex列表</span><br><span class="line">		List&lt;JobVertex&gt; sortedTopology &#x3D; jobGraph.getVerticesSortedTopologicallyFromSources();</span><br><span class="line">		if (log.isDebugEnabled()) &#123;</span><br><span class="line">			log.debug(&quot;Adding &#123;&#125; vertices from job graph &#123;&#125; (&#123;&#125;).&quot;, sortedTopology.size(), jobName, jobId);</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 根据JobVertex列表，生成execution graph</span><br><span class="line">		executionGraph.attachJobGraph(sortedTopology);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>可以看到，生成execution graph的代码，主要是在ExecutionGraph.attachJobGraph,进入方法，往下看：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">for (JobVertex jobVertex : topologiallySorted) &#123;</span><br><span class="line"></span><br><span class="line">	if (jobVertex.isInputVertex() &amp;&amp; !jobVertex.isStoppable()) &#123;</span><br><span class="line">		this.isStoppable &#x3D; false;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; create the execution job vertex and attach it to the graph</span><br><span class="line">	ExecutionJobVertex ejv &#x3D; new ExecutionJobVertex(</span><br><span class="line">		this,</span><br><span class="line">		jobVertex,</span><br><span class="line">		1,</span><br><span class="line">		rpcTimeout,</span><br><span class="line">		globalModVersion,</span><br><span class="line">		createTimestamp);</span><br><span class="line"></span><br><span class="line">	ejv.connectToPredecessors(this.intermediateResults);</span><br><span class="line"></span><br><span class="line">	ExecutionJobVertex previousTask &#x3D; this.tasks.putIfAbsent(jobVertex.getID(), ejv);</span><br><span class="line">	if (previousTask !&#x3D; null) &#123;</span><br><span class="line">		throw new JobException(String.format(&quot;Encountered two job vertices with ID %s : previous&#x3D;[%s] &#x2F; new&#x3D;[%s]&quot;,</span><br><span class="line">			jobVertex.getID(), ejv, previousTask));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	for (IntermediateResult res : ejv.getProducedDataSets()) &#123;</span><br><span class="line">		IntermediateResult previousDataSet &#x3D; this.intermediateResults.putIfAbsent(res.getId(), res);</span><br><span class="line">		if (previousDataSet !&#x3D; null) &#123;</span><br><span class="line">			throw new JobException(String.format(&quot;Encountered two intermediate data set with ID %s : previous&#x3D;[%s] &#x2F; new&#x3D;[%s]&quot;,</span><br><span class="line">				res.getId(), res, previousDataSet));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	this.verticesInCreationOrder.add(ejv);</span><br><span class="line">	this.numVerticesTotal +&#x3D; ejv.getParallelism();</span><br><span class="line">	newExecJobVertices.add(ejv);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>可以看到，创建ExecutionJobVertex的重点就在它的构造函数中</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -273,178 +191,19 @@
 		</ul>
 	</div>
 
-      
+          
 
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/15/%E3%80%90%E8%AF%BB%E6%BA%90%E7%A0%81%E3%80%91StreamGraph-%E7%94%9F%E6%88%90/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
-    <article id="post-Flink-重启策略" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
+    </div></section>
+  
+
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/15/Flink-%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5/">Flink 重启策略</a>
-    </h1>
-  
-
-        
-        <a href="/2020/12/15/Flink-%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5/" class="archive-article-date">
-  	<time datetime="2020-12-14T16:13:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/15/Flink-%E9%87%8D%E5%90%AF%E7%AD%96%E7%95%A5/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/12/14/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2020/12/14/hello-world/" class="archive-article-date">
-  	<time datetime="2020-12-14T15:47:31.215Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/12/14/hello-world/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-  
 
 
           </div>
@@ -466,10 +225,10 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
+		isHome: false,
 		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
